@@ -18,18 +18,20 @@ networks:
 ###  3 - Redis para caché de App Laravel
 ###  4 - Minio para almacenar los archivos, sistema de almacenamiento semejante a s3 de aws
 ###  5 - Mailpit para servidor de correo local
+###  6 - App frontend desarrollada utilizando vuetify
 ###
 services:
     ###
     ### 1 - Php 8.3 para servir la App Laravel
     ###
-    dfs-app:
+    dfs-app-backend:
         build:
             context: './docker/php8.3'
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
         image: 'dfs-filesystem/app'
+        container_name: dfs-app-backend  
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
@@ -50,6 +52,23 @@ services:
             - minio
             - mailpit
     
+    ###
+    ###  6 - App frontend desarrollada utilizando vuetify
+    ###
+    dfs-app-frontend:  
+        build:
+            context: ./frontend/
+            dockerfile: Dockerfile  
+        image: 'dfs-filesystem/frontend'
+        container_name: dfs-app-frontend
+        ports:
+            - "8087:3000"
+        volumes:
+            - ./frontend/:/app
+        networks:  
+            - dfs-network  
+        command: npm run dev -- --host
+        
     ###
     ###  2 - Mysql para base de datos
     ###
