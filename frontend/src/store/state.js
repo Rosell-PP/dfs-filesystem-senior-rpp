@@ -3,6 +3,7 @@ export default {
     rail: false,
 
     user: null,
-    token:null,
-    isAuthenticated: false
+    isAuthenticated: false,
+
+    registered:false,       // Si se ha registrado el usuario correctamente
 }

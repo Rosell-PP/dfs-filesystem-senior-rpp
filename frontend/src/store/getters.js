@@ -11,11 +11,11 @@ export default {
         return state.user;
     },
 
-    token: state => {
-        return state.token;
-    },
-
     isAuthenticated: state => {
         return state.isAuthenticated;
+    },
+
+    registered: state => {
+        return state.registered;
     },
 }

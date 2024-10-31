@@ -38,12 +38,12 @@ class UserLoginController extends Controller
             if (Auth::attempt($data)) {
                 $user = Auth::user();
 
-                $token = $user->createToken('login-token', ["app:files"])->plainTextToken;
+                $user["token"] = $user->createToken('login-token', ["app:files"])->plainTextToken;
 
                 // Devuelvo una respuesta
                 return response()->json([
                     "success"  => true,
-                    "token"    => $token,
+                    "user"     => $user,
                 ], Response::HTTP_OK);
             } else {
                 // Bad credentials

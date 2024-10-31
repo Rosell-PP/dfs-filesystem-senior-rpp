@@ -7,15 +7,23 @@ export default {
         state.rail = payload;
     },
 
-    login(state, user, token) {
+    register(state, value=true) {
+        console.log("mutation register => ", value );
+
+        state.registered = value;
+    },
+
+    login(state, user) {
+        console.log("mutation login");
+
         state.user = user;
-        state.token = token;
         state.isAuthenticated = true;
     },
 
     logout(state) {
+        console.log("mutation logout");
+
         state.user = null;
-        state.token = null;
         state.isAuthenticated = false;
     }
 }

@@ -1,31 +1,47 @@
 <template>  
     <v-container>  
-      <h1>Login</h1>  
-      <v-form @submit.prevent="login">  
-        <v-text-field label="Email" v-model="email"></v-text-field>  
-        <v-text-field label="Password" type="password" v-model="password"></v-text-field>  
-        <v-btn type="submit">Log In</v-btn>  
-      </v-form>  
-    </v-container>  
-  </template>  
+
+      <h1>Login</h1>
+
+      <div v-if="!isAuthenticated()">
+        <v-form @submit.prevent="login">
+          <v-text-field label="Email" v-model="email"></v-text-field>
+          <v-text-field label="Password" type="password" v-model="password"></v-text-field>
+          <v-btn type="submit">Log In</v-btn>
+        </v-form>
+      </div>
+      <div v-else>
+        <v-alert
+          text="You have already login"
+          title="Login Successfully"
+          type="success"
+        ></v-alert>
+      </div>
+    </v-container>
+  </template>
   
   <script>  
-  import { mapActions } from 'vuex';  
+  import { mapActions, mapGetters } from 'vuex';
   
   export default {  
     data() {  
       return {  
-        email: '',  
-        password: '',  
+        email:    'email@gmail.com',  
+        password: '1Qaz2wsx*-+',  
       };  
     },  
     methods: {  
       ...mapActions(['authenticateUser']),
+      ...mapGetters(['isAuthenticated']),
       
       login() {  
-        const user = { email: this.email }; // Simulación de login  
-        this.authenticateUser(user); // Autenticación usando Vuex  
-        this.$router.push({ name: 'Dashboard' }); // Redirigir al Dashboard  
+        const user = {
+          email: this.email,
+          password: this.password
+        };
+
+        this.authenticateUser(user);
+        // this.$router.push({ name: 'Dashboard' }); // Redirigir al Dashboard  
       },  
     },  
   };  
