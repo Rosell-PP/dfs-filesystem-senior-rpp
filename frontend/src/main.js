@@ -4,17 +4,23 @@
  * Bootstraps Vuetify and other plugins then mounts the App`
  */
 
-// Plugins
-import { registerPlugins } from '@/plugins'
-
 // Components
 import App from './App.vue'
+import { registerPlugins } from '@/plugins'
+import { createApp } from 'vue'; 
+import { createVuetify } from 'vuetify';  
+import 'vuetify/styles';  
+import store from './store'; // Importa tu store  
+import router from './plugins/router'; // Importa el router  
 
-// Composables
-import { createApp } from 'vue'
 
-const app = createApp(App)
+const vuetify = createVuetify();
 
-registerPlugins(app)
+const app = createApp(App)  
+  .use(vuetify) 
+  .use(store) 
+  .use(router) 
+  .mount('#app');
 
-app.mount('#app')
+  // Restablecer la sesión
+store.dispatch('restoreSession');  
