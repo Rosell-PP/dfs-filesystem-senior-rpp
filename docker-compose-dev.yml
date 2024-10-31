@@ -1,4 +1,4 @@
-# PARA ENTORNO DE PRODUCCION
+# PARA ENTORNO DE DESARROLLO
 
 ### Redes
 ### Subred        172.19.2.0/27 (Primer Bloque en la 172.19.2.0/27)
@@ -19,7 +19,9 @@ networks:
 ###  2 - Mysql para base de datos
 ###  3 - Redis para caché de App Laravel
 ###  4 - Minio para almacenar los archivos, sistema de almacenamiento semejante a s3 de aws
-###  5 - App frontend desarrollada utilizando vuetify
+###  5 - Mailpit para servidor de correo local
+###  6 - App frontend desarrollada utilizando vuetify
+###  7 - PhpMyAdmin para gestionar la base de datos
 ###
 services:
     ###
@@ -51,7 +53,25 @@ services:
             - mysql
             - redis
             - minio
+            - mailpit
     
+    ###
+    ###  6 - App frontend desarrollada utilizando vuetify
+    ###
+    dfs-app-frontend:  
+        build:
+            context: ./frontend/
+            dockerfile: Dockerfile  
+        image: 'dfs-filesystem/frontend'
+        container_name: dfs-app-frontend
+        ports:
+            - "8087:3000"
+        volumes:
+            - ./frontend/:/app
+        networks:  
+            - dfs-network  
+        command: npm run dev -- --host
+        
     ###
     ###  2 - Mysql para base de datos
     ###
@@ -122,24 +142,39 @@ services:
                 - local
             retries: 3
             timeout: 5s
-
+    
     ###
-    ###  5 - App frontend desarrollada utilizando vuetify
+    ###  5 - Mailpit para servidor de correo local
     ###
-    dfs-app-frontend:  
-        build:
-            context: ./frontend/
-            dockerfile: Dockerfile  
-        image: 'dfs-filesystem/frontend'
-        container_name: dfs-app-frontend
+    mailpit:
+        image: 'axllent/mailpit:latest'
         ports:
-            - "8087:3000"
-        volumes:
-            - ./frontend/:/app
-        networks:  
-            - dfs-network  
-        command: npm run dev -- --host
-
+            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
+            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+        networks:
+            - dfs-network
+    
+    ###
+    ###  7 - PhpMyAdmin para gestionar la base de datos
+    ###
+    myadmin:
+        image: phpmyadmin/phpmyadmin:latest
+        depends_on:
+            - mysql
+        ports:
+            - 8086:80
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+            PMA_USER: '${DB_USERNAME}'
+            PMA_PASSWORD: '${DB_PASSWORD}'
+        networks:
+            - dfs-network
+        deploy:
+            resources:
+                limits:
+                    cpus: "1"
+                    memory: 256M
 
 ###
 ### Volumenes de datos para persistir la info de la app
