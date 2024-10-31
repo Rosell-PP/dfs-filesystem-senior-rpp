@@ -7,6 +7,7 @@
  * @copyright 2024 Ing. Rosell Pupo Polanco
  */
 
+use App\Http\Controllers\Auth\UserRegisterController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -21,17 +22,17 @@ Route::prefix("")
          * y su autenticación
          */
         Route::prefix("users/")
-            ->controller(UsersController::class)
             ->group(function () {
                 // Ruta para registrar un nuevo usuario
-                Route::post("register", "registerUser")->name("users-register");
+                Route::post("register", UserRegisterController::class)->name("users-register");
 
                 // Ruta para autenticar un usuario registrado
-                Route::post("login");
+                Route::post("login")->name("users-login");
 
                 // Ruta para cerrar la sesión de un usuario autenticado
                 Route::post("logout")
-                    ->middleware('auth:sanctum');;
+                    ->name("users-logout")
+                    ->middleware('auth:sanctum');
 
                 // Devuelve los datos del usuario autenticado
                 Route::get('/user', function (Request $request) {

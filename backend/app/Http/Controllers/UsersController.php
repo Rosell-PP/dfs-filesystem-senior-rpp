@@ -14,44 +14,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginUserRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use App\Http\Requests\RegisterUserRequest;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
 
 class UsersController extends Controller
 {
     /**
-     * Registra un usuario en la App
+     * Inicia la sesión de un usuario en la App
      *
-     * @param RegisterUserRequest $request La solicitud
+     * @param LoginUserRequest $request La solicitud
      *
      * @return JsonResponse La respuesta en formato Json
      */
-    public function registerUser(RegisterUserRequest $request)
+    public function login(LoginUserRequest $request)
     {
         // La solicitud debe hacerse solicitando la respuesta en Json
         if ($request->wantsJson()) {
             // Tomo los datos validados
             $data = $request->validated();
 
-            // Guardo el nuevo usuario en la base de datos
-            $user = User::create([
-                "name" => $data["username"],
-                "email" => $data["email"],
-                "password" => $data["password"],
-            ]);
+            if (Auth::attempt($data)) {
+                $user = Auth::user();
+                $token = $user->createToken('login-token', ["app:files"])->plainTextToken;
 
-            // Devuelvo una respuesta
-            if ($user) {
+                // Devuelvo una respuesta
                 return response()->json([
-                    "success"   => true,
-                    "user"      => $user,
-                ], 401);
+                    "success"  => true,
+                    "token"    => $token,
+                ]);
             } else {
+                // Bad credentials
                 return response()->json([
-                    "success"   => false,
-                ], 201);
+                    "success"  => true,
+                    "error"    => Lang::get("Sus credenciales no coinciden con nuestros registros"),
+                ]);
             }
         }
 
