@@ -25,5 +25,15 @@ export default {
 
         state.user = null;
         state.isAuthenticated = false;
+    },
+
+    changeLoading(state, value) {
+        state.loading = value;
+    },
+
+    setValidationErrors(state, payload) {
+        console.log("mutate setValidationErrors", payload);
+        
+        state.validationErrors = payload;
     }
 }

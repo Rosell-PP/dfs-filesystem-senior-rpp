@@ -5,6 +5,8 @@ export default {
      * Registra un nuevo usuario en la base de datos de la App
      */
     registerUser({ commit }, payload) {
+        commit("changeLoading", true);
+
         console.log("state => registerUser ", payload);
 
         api.post("/api/users/register", payload)
@@ -12,10 +14,22 @@ export default {
                 console.info("Response from axios request");
                 console.info(response.data);
                 commit('register', true);
+
+                commit("changeLoading", false);
             })
             .catch(error => {
                 console.error("Error in axios request");
-                console.error(error.response.data.errors);
+                const errors = error.response.data.errors
+                Object.entries(errors).forEach(([k,v]) => {
+                    console.log(k);
+                    v.forEach(value =>{
+                        console.log(value);
+                    })
+                })
+
+
+                commit("setValidationErrors", errors);
+                commit("changeLoading", false);
             });
     },
 

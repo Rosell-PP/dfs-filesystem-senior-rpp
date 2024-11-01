@@ -18,4 +18,16 @@ export default {
     registered: state => {
         return state.registered;
     },
+
+    validationRules: state => {
+        return state.validationRules;
+    },
+
+    loading: state => {
+        return state.loading;
+    },
+
+    validationErrors: state => {
+        return state.validationErrors;
+    },
 }
