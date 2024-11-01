@@ -26,7 +26,15 @@ export default defineConfig({
       },
     }),
   ],
-  define: { 'process.env': {} },
+  define: { 'process.env': {
+    "VUE_APP_PUSHER_APP_ID":"dfs-filesystem-pusher-app",
+    "VUE_APP_PUSHER_APP_KEY":"dfs-filesystem",
+    "VUE_APP_PUSHER_APP_SECRET":"1QAZ2wd$rv^hbgg286**/jnvfc5%$*$",
+    "VUE_APP_PUSHER_HOST":"soketi",
+    "VUE_APP_PUSHER_PORT":6001,
+    "VUE_APP_PUSHER_SCHEME":"http",
+    "VUE_APP_PUSHER_APP_CLUSTER":"mt1",
+  } },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

@@ -45,7 +45,15 @@ class FileProcessedEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('compress-files-channel'.$this->file->id),
+            new PrivateChannel('compress-files-channel-'.$this->file->user_id),
         ];
+    }
+
+    /**
+     * The event's broadcast name.
+     */
+    public function broadcastAs(): string
+    {
+        return 'file.zipped';
     }
 }
