@@ -27,7 +27,6 @@ export default {
                     })
                 })
 
-
                 commit("setValidationErrors", errors);
                 commit("changeLoading", false);
             });
@@ -45,6 +44,7 @@ export default {
      */
     authenticateUser({ commit }, payload) {
         console.log("state => authenticateUser");
+        commit("changeLoading", true);
 
         api.post("/api/users/login", payload)
             .then(response => {
@@ -55,10 +55,20 @@ export default {
                 localStorage.setItem('user', JSON.stringify(user));
 
                 commit("login", user);
+                commit("changeLoading", false);
             })
             .catch(error => {
                 console.error("Error in axios request");
-                console.error(error.response.data.errors);
+                const errors = error.response.data.errors
+                Object.entries(errors).forEach(([k,v]) => {
+                    console.log(k);
+                    v.forEach(value =>{
+                        console.log(value);
+                    })
+                })
+
+                commit("setValidationErrors", errors);
+                commit("changeLoading", false);
             });
     },
     

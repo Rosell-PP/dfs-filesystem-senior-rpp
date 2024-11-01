@@ -49,7 +49,11 @@ class UserLoginController extends Controller
                 // Bad credentials
                 return response()->json([
                     "success"  => true,
-                    "error"    => Lang::get("Sus credenciales no coinciden con nuestros registros"),
+                    "errors"   => [
+                        "email" => [
+                            Lang::get("Sus credenciales no coinciden con nuestros registros")
+                        ]
+                    ],
                 ], Response::HTTP_UNAUTHORIZED);
             }
         }
