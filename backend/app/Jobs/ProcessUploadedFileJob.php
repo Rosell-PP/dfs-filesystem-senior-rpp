@@ -12,6 +12,7 @@
 
 namespace App\Jobs;
 
+use App\Events\FileProcessedEvent;
 use Exception;
 use ZipArchive;
 use App\Models\File;
@@ -101,7 +102,8 @@ class ProcessUploadedFileJob implements ShouldQueue
             $this->file->zipped_at = now();
             $this->file->save();
 
-            // Todo lanzar evento para notificar al frontend
+            // Lanzamos el evento para notificar al frontend
+            FileProcessedEvent::dispatch($this->file);
         } else {  
             throw new Exception(Lang::get("No se ha podido crear el archivo zip"));
         }  
