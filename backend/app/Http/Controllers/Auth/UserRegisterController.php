@@ -73,6 +73,6 @@ class UserRegisterController extends Controller
         }
 
         // En caso contrario se response Bad Request
-        return response(null, Response::HTTP_BAD_REQUEST);
+        return response()->json(null, Response::HTTP_BAD_REQUEST);
     }
 }

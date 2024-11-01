@@ -10,6 +10,7 @@
 use App\Http\Controllers\Auth\UserLoginController;
 use App\Http\Controllers\Auth\UserLogoutController;
 use App\Http\Controllers\Auth\UserRegisterController;
+use App\Http\Controllers\File\FilesListController;
 use App\Http\Controllers\File\FileUploadController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +52,9 @@ Route::prefix("")
         Route::prefix("files/")
             ->middleware('auth:sanctum')
             ->group(function () {
+                // Ruta para obtener un listado de los archivos que ha subido el usuario
+                Route::get("/", FilesListController::class)->name("files-list");
+
                 // Ruta para subir un archivo
                 Route::post("upload", FileUploadController::class)->name("files-upload");
             });

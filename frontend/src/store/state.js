@@ -1,13 +1,15 @@
 export default {
-    order: "0",
-    rail: false,
+    rail: false,    // Controla si se abre o cierra el drawer izquierdo
 
-    user: null,
-    isAuthenticated: false,
+    user: null,     // Almacena los datos del usuario autenticado
+
+    isAuthenticated: false, // Controla si se ha autenticado un usuario o no
 
     registered:false,       // Si se ha registrado el usuario correctamente
 
-    loading: false,
+    loading: false,         // Si se está haciendo una solicitud al api
+
+    files: [],  // Los archivos del usuario
 
     // Reglas de validación
     validationRules: {
@@ -23,5 +25,5 @@ export default {
     },
 
     // Los errores obtenidos del api en la validación de formularios
-    validationErrors: {}
+    validationErrors: {},
 }

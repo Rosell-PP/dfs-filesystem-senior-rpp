@@ -77,6 +77,7 @@ export default {
      */
     logoutUser({ commit }, router) {
         console.log("state => logoutUser");
+
         const user = JSON.parse(localStorage.getItem('user'));
 
         api.post("/api/users/logout", {}, {
@@ -99,7 +100,7 @@ export default {
     },  
 
     /**
-     * Restablece la sesión del usuario al cargar la app
+     * Restablece la sesión del usuario al cargar la app desde el localStorage
      */
     restoreSession({ commit }) {
         console.log("state => restoreSession");
@@ -109,5 +110,36 @@ export default {
         if (user) {  
             commit('login', user);
         }  
+    },
+
+    /**
+     * Carga los archivos del usuario
+     */
+    loadFiles({ commit }, payload) {
+        commit("changeLoading", true);
+
+        const user =  payload.user;
+        const params =  payload.params;
+        
+        api.get(
+            `/api/files`,
+            {
+                params:params,
+                headers: {
+                    Authorization: `Bearer ${user.token}`
+                },
+            })
+            .then(response => {
+                console.info("Response from axios request");
+                console.info(response.data);
+
+                commit('setFiles', response.data.files);
+                commit("changeLoading", false);
+            })
+            .catch(error => {
+                console.error("Error in axios request");
+                console.error(error);
+                commit("changeLoading", false);
+            });
     },
 }
