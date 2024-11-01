@@ -43,5 +43,13 @@ Route::prefix("")
                         });
                     });
             });
+
+        /**
+         * Grupo de rutas encargadas de la gestión de los archivos de los usuarios
+         */
+        Route::prefix("files/")
+            ->middleware('auth:sanctum')
+            ->group(function () {
+            });
     });
 
