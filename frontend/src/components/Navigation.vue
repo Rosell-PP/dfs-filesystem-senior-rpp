@@ -1,4 +1,5 @@
 <template>
+    <!-- Inicio para todos los usuarios, invitados y del sistema -->
     <v-list-item>
         <RouterLink to="/" class="custom-link" :style="rail? 'padding-left:0px':''">
         <v-icon class="mdi mdi-home-account"></v-icon>
@@ -7,7 +8,9 @@
         </span>
         </RouterLink>
     </v-list-item>
+    <!-- / Inicio para todos los usuarios, invitados y del sistema -->
 
+    <!-- Registro de usuario si no hay usuario autenticado -->
     <v-list-item v-if="!isAuthenticated()">
         <RouterLink to="/register" class="custom-link" :style="rail? 'padding-left:0px':''">
             <v-icon class="mdi mdi-account-plus"></v-icon>
@@ -16,6 +19,18 @@
             </span>
         </RouterLink>  
     </v-list-item>
+    <!-- / Registro de usuario si no hay usuario autenticado -->
+
+    <!-- Gestión de archivos si está autenticado el usuario -->
+    <v-list-item v-if="isAuthenticated()">
+        <RouterLink to="/files" class="custom-link" :style="rail? 'padding-left:0px':''">
+        <v-icon class="mdi mdi-file-multiple"></v-icon>
+            <span v-show="!rail">
+            Archivos
+            </span>
+        </RouterLink>
+    </v-list-item>
+    <!-- Gestión de archivos si está autenticado el usuario -->
 
     <!-- Inicio de sesión si no está autenticado el usuario -->
     <v-list-item v-if="!isAuthenticated()">
@@ -64,7 +79,7 @@
             logout() {
                 console.log("Log out!!!");
 
-                this.logoutUser();
+                this.logoutUser(this.$router);
             }
         }
     }

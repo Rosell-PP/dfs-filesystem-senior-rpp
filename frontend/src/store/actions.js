@@ -51,7 +51,7 @@ export default {
     /**
      * Cierra la sesión del usuario autenticado
      */
-    logoutUser({ commit }) {
+    logoutUser({ commit }, router) {
         console.log("state => logoutUser");
         const user = JSON.parse(localStorage.getItem('user'));
 
@@ -64,7 +64,9 @@ export default {
                 commit('logout');
 
                 // Elimina la información del usuario en localStorage  
-                localStorage.removeItem('user');  
+                localStorage.removeItem('user');
+                
+                router.push({ name: 'Home' }); // Redirigir al Home
             })
             .catch(error => {
                 console.error("Error in axios request");

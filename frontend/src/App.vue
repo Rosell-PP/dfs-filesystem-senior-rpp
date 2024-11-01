@@ -39,7 +39,6 @@
                 </v-list-item>
                 <!-- / Si el drawer está abierto -->
 
-
             </v-list>
 
             <v-divider></v-divider>
