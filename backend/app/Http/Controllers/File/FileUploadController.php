@@ -15,15 +15,16 @@
 
 namespace App\Http\Controllers\File;
 
-use App\Http\Controllers\Controller;
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use App\Jobs\ProcessUploadedFileJob;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\UniqueConstraintViolationException;
-use Illuminate\Support\Facades\Lang;
 
 class FileUploadController extends Controller
 {
@@ -50,11 +51,14 @@ class FileUploadController extends Controller
                         "path" => $path,                // Path del archivo en el almacenamiento donde se guarda
                         "size" => Storage::size($path), // Espacio en disco que ocupa el arhivo
                     ]);
+
+                    // Lanzamos el job para procesar el archivo
+                    ProcessUploadedFileJob::dispatch($file);
     
                     return response()->json([
                         "success" => true,
                         "file"    => $file,
-                    ]);
+                    ], Response::HTTP_OK);
                 } else {
                     throw new Exception(
                         Lang::get("No se ha podido guardar el archivo. Pruebe en unos minutos")
