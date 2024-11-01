@@ -5,11 +5,11 @@ window.Pusher = Pusher;
 
 const echo = new Echo({  
     broadcaster: 'pusher',  
-    key: process.env.VUE_APP_PUSHER_APP_KEY,
-    cluster: process.env.VUE_APP_PUSHER_APP_CLUSTER,
+    key: import.meta.env.VITE_PUSHER_APP_KEY,
+    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
     encrypted: true,
-    wsHost: 'localhost',  
-    wsPort: process.env.VUE_APP_PUSHER_PORT || 6001,  
+    wsHost: import.meta.env.VITE_PUSHER_HOST,  
+    wsPort: import.meta.env.VITE_PUSHER_PORT || 6001,
     forceTLS: false,
     disableStats: true,  
 });  
