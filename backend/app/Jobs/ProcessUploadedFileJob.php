@@ -93,11 +93,17 @@ class ProcessUploadedFileJob implements ShouldQueue
             $pathToRemove = $this->file->path;
 
             // Debemos actualizar la info del archivo
+            $initialSize = $this->file->size;
+            $finalSize = Storage::disk("local")->size($zipFileName);
+
             $this->file->name = $zipFileName;
             $this->file->path = "zipped/$zipFileName";
-            $this->file->size = Storage::disk("local")->size($zipFileName);
+            $this->file->compressed = $initialSize - $finalSize;
+            $this->file->size = $finalSize;
             $this->file->zipped_at = now();
             $this->file->save();
+
+            unset($initialSize, $finalSize);
 
             // Ahora borramos los archivos locales
             Storage::disk('local')->delete([

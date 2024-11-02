@@ -63,6 +63,14 @@
           </template>
           <!-- / Columna size -->
 
+          <!-- Columna compressed -->
+          <template #[`item.compressed`]="{ item }">
+            <span class="text-success" v-if="item.compressed">
+              {{ getFileSize(item.compressed) }}
+            </span>
+          </template>
+          <!-- / Columna compressed -->
+
           <!-- Columna acciones sobre cada elemento de la tabla -->
           <template #[`item.action`]="{ item }">
             <!-- Funcionalidad para editar un archivo -->
@@ -225,6 +233,7 @@
           { title: 'Size',       key: 'size'  },
           { title: 'Uploaded',   key: 'created_at' },
           { title: 'Compressed', key: 'zipped_at'  },
+          { title: 'Reduced',    key: 'compressed'  },
           { title: 'Actions',    key: 'action', sortable: false },
         ],
 
