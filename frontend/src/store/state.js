@@ -15,6 +15,9 @@ export default {
     validationRules: {
         required: (v) => !!v || "This information is mandatory",
 
+        // Para validar que se seleccione al menos 1 archivo
+        file: (v) =>  (v && v.length > 0) || "This information is mandatory",
+
         email: (v) =>
             /^[\w.-]+@[a-zA-Z]+\.[a-zA-Z]{2,6}$/
             .test(v) || !v || "Incorrect email address format",

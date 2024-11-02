@@ -86,21 +86,24 @@ class ProcessUploadedFileJob implements ShouldQueue
             if (config('filesystems.default') === "s3") {
                 Storage::disk('s3')->put(
                     "zipped/$zipFileName",
-                    $zipFilePath
+                    fopen($zipFilePath, 'rb')
                 );
             }
 
-            // Ahora borramos los archivos locales
-            Storage::disk('local')->delete([
-                $this->file->path,
-                $zipFileName
-            ]);
+            $pathToRemove = $this->file->path;
 
             // Debemos actualizar la info del archivo
             $this->file->name = $zipFileName;
             $this->file->path = "zipped/$zipFileName";
+            $this->file->size = Storage::disk("local")->size($zipFileName);
             $this->file->zipped_at = now();
             $this->file->save();
+
+            // Ahora borramos los archivos locales
+            Storage::disk('local')->delete([
+                $pathToRemove,
+                $zipFileName
+            ]);
 
             // Lanzamos el evento para notificar al frontend
             FileProcessedEvent::dispatch($this->file);

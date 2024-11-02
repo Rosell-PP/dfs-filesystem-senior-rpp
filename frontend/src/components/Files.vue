@@ -18,6 +18,10 @@
           />
 
           <v-spacer />
+
+          <v-btn color="primary" @click="showUpload=true">
+            Upload new file
+          </v-btn>
           
       </div>
 
@@ -77,6 +81,7 @@
               icon="mdi-file-download"
               color="info"
               :disabled="!canDownloaded(item)"
+              @click.prevent="downloadFile(item)"
             ></v-btn>
             <!-- / Funcionalidad para descargar un archivo -->
           </template>
@@ -137,6 +142,60 @@
     </v-dialog>
     <!-- / Modal para editar el archivo -->
 
+    <!-- Modal para subir nuevo archivo -->
+    <v-dialog
+      v-model="showUpload"
+      max-width="480"
+    >
+      <v-form @submit.prevent="uploadFile" ref="uploadFileForm">
+        <v-card title="Uploading File">
+
+          <v-container>
+
+            <!-- Nombre del archivo -->
+            <v-text-field
+                label="File name"
+                v-model="newFile.name"
+              ></v-text-field>
+              <!-- / Nombre del archivo -->
+
+              <!-- El archivo -->
+              <v-file-input
+                clearable
+                  label="File input"
+                  show-size
+                  v-model="newFile.file"
+                  :rules="[
+                    rules.file,
+                  ]"
+                ></v-file-input>
+              <!-- / El archivo -->
+
+
+          </v-container>
+              
+          <v-card-actions>
+            <v-spacer></v-spacer>
+  
+            <v-btn
+              text="Cancel"
+              variant="text"
+              @click="showUpload = false"
+            ></v-btn>
+
+            <v-btn
+              type="sumbit"
+              text="Upload"
+              :loading="isLoading"
+            ></v-btn>
+  
+          </v-card-actions>
+        </v-card>
+      </v-form>
+
+    </v-dialog>
+    <!-- / Modal para subir nuevo archivo -->
+
   </v-container>
 </template>
   
@@ -145,6 +204,7 @@
   import { mapGetters, mapActions } from 'vuex';
   import moment from 'moment';
   import { filesize } from 'filesize';
+  import api from "@/plugins/axios";
 
   export default {
     data() {  
@@ -168,9 +228,18 @@
           { title: 'Actions',    key: 'action', sortable: false },
         ],
 
-        selectedFile:null,
-        showEdit: false,
-        filename:"",
+        selectedFile:null,  // Archivo que se está editando
+        filename:"",        // Nuevo nombre para el archivo seleccionado
+        showEdit: false,    // Si se muestra la modal para editar un archivo
+        showUpload:false,   // Si se muestra la modal para subir nuevo archivo
+
+        // Para subir un nuevo archivo
+        newFile: {
+          name:"",
+          file:null,
+        },
+
+        listOptions: {},  // Las opciones del componente table
       };  
     },
 
@@ -202,27 +271,42 @@
       isLoading() {
         return this.loading();
       },
+
+      // Si se ha subido un archivo
+      fileIsUploaded() {
+        return this.fileUploaded();
+      }
     },
 
     watch: {
       isLoading(value) {
         if (!value) {
+          // Si se está editando
           if (this.showEdit == true) {
             this.showEdit = false;
+            this.filename = "";
+          }
+
+          // Si se está subiendo
+          if (this.showUpload == true) {
+            this.showUpload = false;
+            this.newFile.name = "";
+            this.newFile.file = null;
           }
         }
-      }
+      },
     },
 
     methods: {
       ...mapGetters(['user', 'files', 'loading', 'validationRules', 'validationErrors']),
 
-      ...mapActions(['loadFiles', 'updateFileName']),
+      ...mapActions(['loadFiles', 'updateFileName', 'uploadNewFile']),
 
       /**
        * Refresca el listado de archivos
        */
       loadItems(options) {
+        this.listOptions = options;
         console.log("Opciones => ", options);
         const { page, itemsPerPage, sortBy, sortDesc, search } = options;
         
@@ -247,7 +331,8 @@
        */
       formatDate(date) {
         if (!date) return '';
-        return moment(date).format('DD-MM-YYYY HH:mm:ss');
+        // Devolver la hora en formato utc, como se almacena en laravel
+        return moment.utc(date).format('DD-MM-YYYY HH:mm:ss');
       },
 
       /**
@@ -303,6 +388,49 @@
         this.selectedFile = item;
         this.filename = item.name;
         this.showEdit = true;
+      },
+
+      /**
+       * Descargar un archivo
+       */
+      downloadFile(item) {
+        api.get(
+            `/api/files/download/${item.id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${this.getUser.token}`
+                },
+            })
+            .then(response => {
+                console.info("Response from axios request");
+                console.info(response.data);
+            })
+            .catch(error => {
+                console.error("Error in axios request");
+                console.error(error);
+            });
+      },
+
+      /**
+       * Guarda un archivo en la base de datos
+       */
+      async uploadFile() {
+        const self = this;
+        const validated = await self.$refs.uploadFileForm.validate();
+
+        // Validamos que el formulario esté correcto, sin errores de validación
+        if (validated.valid) {
+          const formData = new FormData();
+
+          formData.append("filename", self.newFile.name);
+          formData.append("file", self.newFile.file);
+
+          formData.append("token", self.getUser.token);
+
+          self.uploadNewFile(formData);
+        } else {
+          console.error("Errores de validación en el formulario de login");
+        }
       },
 
     },

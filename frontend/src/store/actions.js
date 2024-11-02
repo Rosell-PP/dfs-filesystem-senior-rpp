@@ -172,4 +172,31 @@ export default {
                 commit("changeLoading", false);
             });
     },
+
+    /**
+     * Sube un archivo a la App
+     */
+    uploadNewFile({ commit }, formData) {
+        commit("changeLoading", true);
+        
+        api.post(
+            `/api/files/upload`,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${formData.get('token')}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
+            .then(response => {
+                console.info("Response from axios request");
+                console.info(response.data);
+                commit("changeLoading", false);
+            })
+            .catch(error => {
+                console.error("Error in axios request");
+                console.error(error);
+                commit("changeLoading", false);
+            });
+    },
 }

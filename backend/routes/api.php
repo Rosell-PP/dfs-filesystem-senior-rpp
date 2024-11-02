@@ -10,6 +10,7 @@
 use App\Http\Controllers\Auth\UserLoginController;
 use App\Http\Controllers\Auth\UserLogoutController;
 use App\Http\Controllers\Auth\UserRegisterController;
+use App\Http\Controllers\File\FileDownloadController;
 use App\Http\Controllers\File\FilesListController;
 use App\Http\Controllers\File\FileUpdateController;
 use App\Http\Controllers\File\FileUploadController;
@@ -59,8 +60,11 @@ Route::prefix("")
                 // Ruta para subir un archivo
                 Route::post("upload", FileUploadController::class)->name("files-upload");
 
-                // Ruta para subir un archivo
+                // Ruta para actualizar un archivo
                 Route::patch("update/{file}", FileUpdateController::class)->name("file-update");
+
+                // Ruta para descargar un archivo
+                Route::get("download/{file}", FileDownloadController::class)->name("file-download");
             });
     });
 
