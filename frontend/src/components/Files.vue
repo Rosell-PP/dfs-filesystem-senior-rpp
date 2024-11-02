@@ -204,6 +204,16 @@
       },
     },
 
+    watch: {
+      isLoading(value) {
+        if (!value) {
+          if (this.showEdit == true) {
+            this.showEdit = false;
+          }
+        }
+      }
+    },
+
     methods: {
       ...mapGetters(['user', 'files', 'loading', 'validationRules', 'validationErrors']),
 
@@ -277,7 +287,7 @@
           const payload = {
             filename: self.filename,
             id: self.selectedFile.id,
-            token: self.user.token,
+            token: self.getUser.token,
           };
   
           self.updateFileName(payload);

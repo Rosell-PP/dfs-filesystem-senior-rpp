@@ -163,6 +163,7 @@ export default {
                 console.info("Response from axios request");
                 console.info(response.data);
                 
+                commit("updateFile", response.data.file);
                 commit("changeLoading", false);
             })
             .catch(error => {
