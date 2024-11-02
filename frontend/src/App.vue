@@ -29,13 +29,15 @@
                 <!-- Si el drawer está abierto -->
                 <v-list-item v-else>
                     <template v-slot:append>
+                        <span v-if="isAuthenticated" class="text-primary">
+                            Hi {{ user.name }} <{{ user.email }}>
+                        </span>
                         <v-btn
                             icon="mdi-chevron-left"
                             variant="text"
                             @click.stop="toogleRail"
                         ></v-btn>
                     </template>
-                    
                 </v-list-item>
                 <!-- / Si el drawer está abierto -->
 
