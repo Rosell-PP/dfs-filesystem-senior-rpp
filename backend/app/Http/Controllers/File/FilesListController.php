@@ -31,20 +31,29 @@ class FilesListController extends Controller
     {
         // La solicitud debe hacerse solicitando la respuesta en Json
         if ($request->wantsJson()) {
+            // Posibles parámetros relacionados con el listado
+            $itemsPerPage = $request->input("itemsPerPage", 10);
+            $search = $request->input("search", "");
+            $sortBy = $request->input("sortBy", [[]])[0] ?? [];
+            
             // Construyo la consulta para obtener los archivos del usuario
             $query = File::query()
+                // Filtro los archivos del usuario autenticado
                 ->where("user_id", Auth::user()->id)
-                ->when($request->get('search'), function ($query, $search) {
-                    $search = strtolower(trim($search));
 
+                // Para filtrar por el criterio de búsqueda
+                ->when($search, function ($query, $search) {
+                    $search = strtolower(trim($search));
                     return $query->whereRaw('LOWER(name) LIKE ?', ["%$search%"])
                         ->orWhereRaw('LOWER(path) LIKE ?', ["%$search%"]);
                 })
-                ->when($request->get('sort'), function ($query, $sortBy) {
+
+                // Para ordenar por la columna especificada
+                ->when($sortBy, function ($query, $sortBy) {
                     return $query->orderBy($sortBy['key'], $sortBy['order']);
                 });
 
-            $files = $query->paginate($request->get('limit') == -1 ? File::count():$request->get('limit', 10));
+            $files = $query->paginate($itemsPerPage == -1 ? File::count():$itemsPerPage);
 
             return response()->json([
                 "success"   => true,

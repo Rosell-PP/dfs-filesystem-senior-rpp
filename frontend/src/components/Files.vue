@@ -41,14 +41,14 @@
           </template>
           <!-- / Texto no-data personalizado -->
 
-          <!-- Columna zipped -->
-          <template #[`item.zipped`]="{ item }">
+          <!-- Columna zipped_at -->
+          <template #[`item.zipped_at`]="{ item }">
             {{ formatDate(item.zipped_at) }}
           </template>
-          <!-- / Columna zipped -->
+          <!-- / Columna zipped_at -->
 
           <!-- Columna created_at -->
-          <template #[`item.created`]="{ item }">
+          <template #[`item.created_at`]="{ item }">
             {{ formatDate(item.created_at) }}
           </template>
           <!-- / Columna created_at -->
@@ -84,6 +84,7 @@
       return {  
         // Opciones a mostrar en los datatables
         itemsPerPageOptions: [
+            { title: "5",  value: 5 },
             { title: "10", value: 10 },
             { title: "20", value: 20 },
             { title: "50", value: 50 },
@@ -95,8 +96,8 @@
         headers: [
           { title: 'Name',       key: 'name'  },
           { title: 'Size',       key: 'size'  },
-          { title: 'Uploaded',    key: 'created' },
-          { title: 'Compressed', key: 'zipped'  },
+          { title: 'Uploaded',   key: 'created_at' },
+          { title: 'Compressed', key: 'zipped_at'  },
           { title: 'Actions',    key: 'action', sortable: false },
         ],
       };  
