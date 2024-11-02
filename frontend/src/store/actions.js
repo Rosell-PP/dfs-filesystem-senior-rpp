@@ -142,4 +142,33 @@ export default {
                 commit("changeLoading", false);
             });
     },
+
+    /**
+     * Actualiza el nombre de un archivo
+     */
+    updateFileName({ commit }, payload) {
+        commit("changeLoading", true);
+        
+        api.patch(
+            `/api/files/update/${payload.id}`,
+            {
+                filename:payload.filename,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${payload.token}`
+                },
+            })
+            .then(response => {
+                console.info("Response from axios request");
+                console.info(response.data);
+                
+                commit("changeLoading", false);
+            })
+            .catch(error => {
+                console.error("Error in axios request");
+                console.error(error);
+                commit("changeLoading", false);
+            });
+    },
 }

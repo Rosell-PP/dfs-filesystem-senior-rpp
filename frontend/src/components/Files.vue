@@ -61,14 +61,81 @@
 
           <!-- Columna acciones sobre cada elemento de la tabla -->
           <template #[`item.action`]="{ item }">
+            <!-- Funcionalidad para editar un archivo -->
+            <v-btn
+              class="mr-1"
+              density="comfortable"
+              icon="mdi-file-edit"
+              color="warning"
+              @click="selectFileForEdit(item)"
+            ></v-btn>
+            <!-- / Funcionalidad para editar un archivo -->
 
+            <!-- Funcionalidad para descargar un archivo -->
+            <v-btn
+              density="comfortable"
+              icon="mdi-file-download"
+              color="info"
+              :disabled="!canDownloaded(item)"
+            ></v-btn>
+            <!-- / Funcionalidad para descargar un archivo -->
           </template>
           <!-- / Columna acciones sobre cada elemento de la tabla -->
 
       </v-data-table-server>
 
-      </v-card>
-      <!-- / Listado de archivos del usuario  -->
+    </v-card>
+    <!-- / Listado de archivos del usuario  -->
+
+    <!-- Modal para editar el archivo -->
+    <v-dialog
+      v-model="showEdit"
+      max-width="480"
+    >
+      <v-form @submit.prevent="update" ref="updateFileForm">
+        <v-card title="Editing File">
+
+          <v-container>
+            <div class="text-secondary px-5 py-2">
+              <p>Name : {{ selectedFile.name }}</p>
+              <p>Size : {{ getFileSize(selectedFile.size) }}</p>
+              <p>Uploaded : {{ formatDate(selectedFile.created_at) }}</p>
+              <p>Compressed : {{ formatDate(selectedFile.zipped_at) }}</p>
+            </div>
+            <!-- Nombre del archivo -->
+            <v-text-field
+                label="File name"
+                v-model="filename"
+                :rules="[
+                  rules.required,
+                ]"
+                :class="{ 'v-input--error': hasValidationErrors('name') }"
+                :error-messages="hasValidationErrors('name')"
+              ></v-text-field>
+              <!-- / Nombre del archivo -->
+          </v-container>
+              
+          <v-card-actions>
+            <v-spacer></v-spacer>
+  
+            <v-btn
+              text="Cancel"
+              variant="text"
+              @click="showEdit = false"
+            ></v-btn>
+
+            <v-btn
+              type="sumbit"
+              text="Update"
+              :loading="isLoading"
+            ></v-btn>
+  
+          </v-card-actions>
+        </v-card>
+      </v-form>
+
+    </v-dialog>
+    <!-- / Modal para editar el archivo -->
 
   </v-container>
 </template>
@@ -100,6 +167,10 @@
           { title: 'Compressed', key: 'zipped_at'  },
           { title: 'Actions',    key: 'action', sortable: false },
         ],
+
+        selectedFile:null,
+        showEdit: false,
+        filename:"",
       };  
     },
 
@@ -121,12 +192,22 @@
       getFiles() {
         return this.files();
       },
+
+      // Las reglas de validación
+      rules() {
+        return this.validationRules();
+      },
+
+      // Si se está ejecutando una solicitud
+      isLoading() {
+        return this.loading();
+      },
     },
 
     methods: {
-      ...mapGetters(['user', 'files', 'loading']),
+      ...mapGetters(['user', 'files', 'loading', 'validationRules', 'validationErrors']),
 
-      ...mapActions(['loadFiles']),
+      ...mapActions(['loadFiles', 'updateFileName']),
 
       /**
        * Refresca el listado de archivos
@@ -164,7 +245,62 @@
        */
       getFileSize(size) {
         return filesize(size)
-      }
+      },
+
+      /**
+       * Devuelve si se puede descargar o no un archivo
+       */
+      canDownloaded(file) {
+        return file.zipped_at != null;
+      },
+
+      /**
+       * Devuelve si hay errores de validación en determinado campo
+       */
+      hasValidationErrors(field) {
+        const errors = this.validationErrors();
+        if (Object.hasOwn(errors, field)) {
+          return errors[field];
+        }
+        return null;
+      },
+
+      /**
+       * Valida el formulario para editar el nombre de un archivo y lanza la solicitud
+       */
+      async update() {
+        const self = this;
+        const validated = await self.$refs.updateFileForm.validate();
+
+        // Validamos que el formulario esté correcto, sin errores de validación
+        if (validated.valid) {
+          const payload = {
+            filename: self.filename,
+            id: self.selectedFile.id,
+            token: self.user.token,
+          };
+  
+          self.updateFileName(payload);
+        } else {
+          console.error("Errores de validación en el formulario de login");
+        }
+      },
+
+      /**
+       * Selecciona un archivo para ser editado
+       */
+      selectFileForEdit(item) {
+        this.selectedFile = item;
+        this.filename = item.name;
+        this.showEdit = true;
+      },
+
     },
   };  
-  </script>
+</script>
+
+<style scoped>
+  .v-input--error {
+    color: red;
+  }
+</style>
