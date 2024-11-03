@@ -1,55 +1,60 @@
 <template>  
-    <v-container>  
+  <v-container>  
 
-      <h1>Login</h1>
+    <h1>Login</h1>
 
-      <div v-if="!authenticated">
-        <v-form @submit.prevent="login" ref="loginForm">
+    <div v-if="!authenticated">
+      <v-form @submit.prevent="login" ref="loginForm">
 
-           <!-- Correo electrónico -->
-           <v-text-field
-            label="Email"
-            v-model="email"
-            :rules="[
-              rules.required,
-              rules.email,
-            ]"
-            :class="{ 'v-input--error': hasValidationErrors('email') }"
-            :error-messages="hasValidationErrors('email')"
-          ></v-text-field>
-          <!-- / Correo electrónico -->
-
-          <!-- Password -->
+          <!-- Correo electrónico -->
           <v-text-field
-            label="Password"
-            type="password"
-            v-model="password"
-            :rules="[
-              rules.required,
-              rules.password,
-            ]"
-            :class="{ 'v-input--error': hasValidationErrors('password') }"
-            :error-messages="hasValidationErrors('password')"
-          ></v-text-field>
-          <!-- / Password -->
+          label="Email"
+          v-model="email"
+          :rules="[
+            rules.required,
+            rules.email,
+          ]"
+          :class="{ 'v-input--error': hasValidationErrors('email') }"
+          :error-messages="hasValidationErrors('email')"
+        ></v-text-field>
+        <!-- / Correo electrónico -->
 
-          <v-btn type="submit" :loading="isLoading">Log In</v-btn>
-        </v-form>
-      </div>
-      <div v-else>
-        <v-alert
-          text="You have already login"
-          title="Login Successfully"
-          type="success"
-        ></v-alert>
-      </div>
-    </v-container>
-  </template>
+        <!-- Password -->
+        <v-text-field
+          label="Password"
+          type="password"
+          v-model="password"
+          :rules="[
+            rules.required,
+            rules.password,
+          ]"
+          :class="{ 'v-input--error': hasValidationErrors('password') }"
+          :error-messages="hasValidationErrors('password')"
+        ></v-text-field>
+        <!-- / Password -->
+
+        <v-btn type="submit" :loading="isLoading">Log In</v-btn>
+      </v-form>
+    </div>
+    <div v-else>
+      <v-alert
+        text="You have already login"
+        title="Login Successfully"
+        type="success"
+      ></v-alert>
+    </div>
+  </v-container>
+</template>
   
-  <script>  
+<script>  
+  import mymixin from '@/mixins/functions';
   import { mapActions, mapGetters } from 'vuex';
   
-  export default {  
+  export default {
+    mixins:[
+      mymixin
+    ],
+    
     data() {  
       return {  
         email:    'email@gmail.com',  
@@ -97,17 +102,6 @@
           console.error("Errores de validación en el formulario de login");
         }
       },
-
-      /**
-       * Devuelve si hay errores de validación en determinado campo
-       */
-      hasValidationErrors(field) {
-        const errors = this.validationErrors();
-        if (Object.hasOwn(errors, field)) {
-          return errors[field];
-        }
-        return null;
-      },
     },
 
     watch:{
@@ -121,7 +115,7 @@
     }
 
   };  
-  </script>
+</script>
 
 <style scoped>
   .v-input--error {

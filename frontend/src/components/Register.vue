@@ -1,5 +1,5 @@
 <template>  
-    <v-container>  
+  <v-container>  
 
       <h1>Register</h1>
 
@@ -69,13 +69,18 @@
           @click:close="unregister"
         ></v-alert>
       </div>
-    </v-container>  
-  </template>  
+  </v-container>  
+</template>  
   
-  <script>  
+<script>
+  import mymixin from '@/mixins/functions';
   import { mapActions, mapGetters } from 'vuex';
   
-  export default {  
+  export default {
+    mixins:[
+      mymixin
+    ],
+
     data() {  
       return {
         form:{
@@ -86,6 +91,7 @@
         }  
       };  
     },
+
     computed:{
       // Las reglas de validación
       rules() {
@@ -141,20 +147,9 @@
           console.error("Errores de validación en el formulario de registro");
         }
       },
-      
-      /**
-       * Devuelve si hay errores de validación en determinado campo
-       */
-      hasValidationErrors(field) {
-        const errors = this.validationErrors();
-        if (Object.hasOwn(errors, field)) {
-          return errors[field];
-        }
-        return null;
-      },
     },  
   };  
-  </script>
+</script>
 
 
 <style scoped>

@@ -208,13 +208,17 @@
 </template>
   
 <script>  
-  import echo from '@/plugins/echo';
-  import { mapGetters, mapActions } from 'vuex';
   import moment from 'moment';
+  import echo from '@/plugins/echo';
   import { filesize } from 'filesize';
-  import api from "@/plugins/axios";
+  import mymixin from '@/mixins/functions';
+  import { mapGetters, mapActions } from 'vuex';
 
   export default {
+    mixins:[
+      mymixin
+    ],
+
     data() {  
       return {  
         // Opciones a mostrar en los datatables
@@ -356,17 +360,6 @@
        */
       canDownloaded(file) {
         return file.zipped_at != null;
-      },
-
-      /**
-       * Devuelve si hay errores de validación en determinado campo
-       */
-      hasValidationErrors(field) {
-        const errors = this.validationErrors();
-        if (Object.hasOwn(errors, field)) {
-          return errors[field];
-        }
-        return null;
       },
 
       /**
