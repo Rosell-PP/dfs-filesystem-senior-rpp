@@ -50,4 +50,15 @@ export default {
     setFiles(state, payload) {
         state.files = payload;
     },
+
+    /**
+     * Actualiza un archivo editado en la lista de archivos
+     */
+    updateFile(state, file) {
+        state.files.data.forEach(element => {
+            if (element.id == file.id) {
+                element.name = file.name;
+            }
+        });
+    },
 }

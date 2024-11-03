@@ -23,6 +23,7 @@ networks:
 ###  6 - App frontend desarrollada utilizando vuetify
 ###  7 - PhpMyAdmin para gestionar la base de datos
 ###  8 - Soketi para servidor websockets similar a pusher
+###  9 - Ejecuta la cola de trabajo de laravel (php artisan queue:work)
 ###
 services:
     ###
@@ -55,23 +56,6 @@ services:
             - redis
             - minio
             - mailpit
-    
-    ###
-    ###  6 - App frontend desarrollada utilizando vuetify
-    ###
-    dfs-app-frontend:  
-        build:
-            context: ./frontend/
-            dockerfile: Dockerfile  
-        image: 'dfs-filesystem/frontend'
-        container_name: dfs-app-frontend
-        ports:
-            - "8087:3000"
-        volumes:
-            - ./frontend/:/app
-        networks:  
-            - dfs-network  
-        command: npm run dev -- --host
         
     ###
     ###  2 - Mysql para base de datos
@@ -156,6 +140,23 @@ services:
             - dfs-network
     
     ###
+    ###  6 - App frontend desarrollada utilizando vuetify
+    ###
+    dfs-app-frontend:  
+        build:
+            context: ./frontend/
+            dockerfile: Dockerfile  
+        image: 'dfs-filesystem/frontend'
+        container_name: dfs-app-frontend
+        ports:
+            - "8087:3000"
+        volumes:
+            - ./frontend/:/app
+        networks:  
+            - dfs-network  
+        command: npm run dev -- --host
+
+    ###
     ###  7 - PhpMyAdmin para gestionar la base de datos
     ###
     myadmin:
@@ -198,6 +199,24 @@ services:
                 limits:
                     cpus: "1"
                     memory: 256M
+    
+    ###
+    ### 9 - Ejecuta la cola de trabajo de laravel (php artisan queue:work)
+    ###
+    dfs-app-backend-queue:  
+        image: dfs-filesystem/app 
+        volumes:  
+            - './backend/:/var/www/html'
+        depends_on:  
+            - dfs-app-backend
+            - redis
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+        networks:
+            - dfs-network
+        command: php artisan queue:work --sleep=3 --tries=3 --timeout=90 &
+
 ###
 ### Volumenes de datos para persistir la info de la app
 ###
