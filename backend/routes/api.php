@@ -64,7 +64,9 @@ Route::prefix("")
                 Route::patch("update/{file}", FileUpdateController::class)->name("file-update");
 
                 // Ruta para descargar un archivo
-                Route::get("download/{file}", FileDownloadController::class)->name("file-download");
+                Route::get("download/{file}", FileDownloadController::class)
+                    ->name("file-download")
+                    ->withoutMiddleware("auth:sanctum");
             });
     });
 

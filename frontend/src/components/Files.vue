@@ -403,21 +403,15 @@
        * Descargar un archivo
        */
       downloadFile(item) {
-        api.get(
-            `/api/files/download/${item.id}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${this.getUser.token}`
-                },
-            })
-            .then(response => {
-                console.info("Response from axios request");
-                console.info(response.data);
-            })
-            .catch(error => {
-                console.error("Error in axios request");
-                console.error(error);
-            });
+        const url = `${import.meta.env.VITE_API_URL}api/files/download/${item.id}`;
+
+        // Crear un enlace y simular el clic 
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       },
 
       /**

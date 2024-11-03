@@ -20,25 +20,6 @@ use Illuminate\Support\Facades\Storage;
 class FileDownloadController extends Controller
 {
     /**
-     * Genera url temporal del archivo para poder ser descargado
-     * si el almacenamiento es s3
-     */
-    private function getSignedUrl(File $file)
-    {
-        $disk = Storage::disk('s3');
-
-        if (!$disk->exists($file->path)) {
-            return response()->json([
-                'message' => 'Archivo no encontrado.'
-            ], Response::HTTP_NOT_FOUND);
-        }  
-
-        $url = $disk->temporaryUrl($file->path, now()->addMinutes(5));// Expira en 5 minutos
-
-        return $url;
-    }  
-
-    /**
      * Descarga un archivo
      *
      * @param Request $request La solicitud
@@ -48,20 +29,25 @@ class FileDownloadController extends Controller
      */
     public function __invoke(Request $request, File $file)
     {
-        // La solicitud debe hacerse solicitando la respuesta en Json
-        if ($request->wantsJson()) {
-            // Verificamos el almacenamiento de la app
-            if (config('filesystems.default') === "s3") {
-                Storage::disk('local')->put(
-                    $file->path,
-                    Storage::disk('s3')->get($file->path)
-                );
-            }
-            
-            return response()->download(Storage::disk('local')->get($file->path));
+        // Verificamos el almacenamiento de la app
+        $path = $file->path;
+        $name = $file->name;
+
+        if (config('filesystems.default') === "s3") {
+            Storage::disk('local')->put(
+                $path,
+                Storage::disk('s3')->get($path)
+            );
         }
 
-        // En caso contrario se response Bad Request
-        return response()->json(null, Response::HTTP_BAD_REQUEST);
+        return response()
+            ->download(
+                Storage::disk('local')->path($file->path),
+                $name,
+                [
+                    'Content-Type' => 'application/octet-stream',
+                    'Content-Disposition' => 'attachment; filename="' . basename($name) . '"', 
+                ],
+            )->deleteFileAfterSend();
     }
 }
