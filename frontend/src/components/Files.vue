@@ -89,6 +89,7 @@
               icon="mdi-file-download"
               color="info"
               :disabled="!canDownloaded(item)"
+              :loading="!canDownloaded(item)"
               @click.prevent="downloadFile(item)"
             ></v-btn>
             <!-- / Funcionalidad para descargar un archivo -->
@@ -265,6 +266,10 @@
           console.log(JSON.stringify(data));
       });
 
+      /**
+       * Escuchamos por los eventos de archivos comprimidos para
+       * permitir descargar el archivo procesado
+       */
       const channel = `compress-files-channel`;
       echo.channel(channel)
         .subscribed(e => {
@@ -273,6 +278,8 @@
         .listen('.file.zipped', (e) => {
           console.log('FileProcessedEvent recibido:');
           console.log("File => ", e.file);
+
+          this.updateFile(e.file)
         });
       
     },
@@ -324,7 +331,7 @@
     methods: {
       ...mapGetters(['user', 'files', 'loading', 'validationRules', 'validationErrors']),
 
-      ...mapActions(['loadFiles', 'updateFileName', 'uploadNewFile']),
+      ...mapActions(['loadFiles', 'updateFileName', 'uploadNewFile', 'updateFile']),
 
       /**
        * Refresca el listado de archivos
@@ -431,7 +438,6 @@
 
           formData.append("filename", self.newFile.name);
           formData.append("file", self.newFile.file);
-
           formData.append("token", self.getUser.token);
 
           self.uploadNewFile(formData);

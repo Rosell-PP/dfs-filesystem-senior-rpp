@@ -54,11 +54,36 @@ export default {
     /**
      * Actualiza un archivo editado en la lista de archivos
      */
-    updateFile(state, file) {
+    updateFileName(state, file) {
         state.files.data.forEach(element => {
             if (element.id == file.id) {
                 element.name = file.name;
             }
         });
     },
+
+    /**
+     * Actualiza los datos de un archivo
+     */
+    updateFile(state, file) {
+        state.files.data.forEach(element => {
+            if (element.id == file.id) {
+                element.name = file.name;
+                element.path = file.path;
+                element.size = file.size;
+                element.compressed = file.compressed;
+                element.zipped_at = file.zipped_at;
+            }
+        });
+    },
+
+    newFile(state, file) {
+        // Si se está mostrando la cantidad de los elementos por página
+        if (state.files.data.length >= state.files.per_page) {
+            state.files.data.pop();
+        }
+
+        state.files.data.splice(0, 0, file);
+        state.files.total += 1;
+    }
 }

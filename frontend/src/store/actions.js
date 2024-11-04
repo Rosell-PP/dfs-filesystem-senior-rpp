@@ -163,7 +163,7 @@ export default {
                 console.info("Response from axios request");
                 console.info(response.data);
                 
-                commit("updateFile", response.data.file);
+                commit("updateFileName", response.data.file);
                 commit("changeLoading", false);
             })
             .catch(error => {
@@ -191,6 +191,8 @@ export default {
             .then(response => {
                 console.info("Response from axios request");
                 console.info(response.data);
+
+                commit("newFile", response.data.file);
                 commit("changeLoading", false);
             })
             .catch(error => {
@@ -199,4 +201,12 @@ export default {
                 commit("changeLoading", false);
             });
     },
+
+    /**
+     * Ejecuta el commit para actualizar la info de un archivo
+     * del listado
+     */
+    updateFile({commit}, file) {
+        commit("updateFile", file);
+    }
 }

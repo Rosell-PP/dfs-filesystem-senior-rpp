@@ -35,6 +35,11 @@ class FilesListController extends Controller
             $itemsPerPage = $request->input("itemsPerPage", 10);
             $search = $request->input("search", "");
             $sortBy = $request->input("sortBy", [[]])[0] ?? [];
+
+            // Para ordenar por defecto último archivo subido
+            if (count($sortBy) == 0) {
+                $sortBy = ['key'=>'created_at', 'order'=>'desc'];
+            }
             
             // Construyo la consulta para obtener los archivos del usuario
             $query = File::query()
