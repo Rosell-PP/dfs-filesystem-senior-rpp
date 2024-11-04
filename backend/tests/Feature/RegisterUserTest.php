@@ -28,7 +28,7 @@ class RegisterUserTest extends TestCase
 
         $payload = [
             'username' => '',                           // Is required
-            'email' => 'testing',                    // Wrond email
+            'email' => 'testing',                       // Wrond email
             'password' => 'password',                   // Weak password
             'password_confirmation' => 'passwordaa',    // Mismatch with password
         ];
@@ -40,11 +40,6 @@ class RegisterUserTest extends TestCase
 
         // Verifica que los errores sean los esperados  
         $response->assertJsonValidationErrors(['username', 'email', 'password']);
-        
-        // // Verifica que el usuario se haya creado en la base de datos
-        // $this->assertDatabaseHas('users', [  
-        //     'email' => 'testing@fake.email.com',
-        // ]); 
     }
 
     /**
