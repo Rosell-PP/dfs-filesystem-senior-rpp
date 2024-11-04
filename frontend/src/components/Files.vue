@@ -74,24 +74,34 @@
           <!-- Columna acciones sobre cada elemento de la tabla -->
           <template #[`item.action`]="{ item }">
             <!-- Funcionalidad para editar un archivo -->
-            <v-btn
-              class="mr-1"
-              density="comfortable"
-              icon="mdi-file-edit"
-              color="warning"
-              @click="selectFileForEdit(item)"
-            ></v-btn>
+            <v-tooltip text="Edit file name" location="top">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  v-bind="props"
+                  class="mr-1"
+                  density="comfortable"
+                  icon="mdi-file-edit"
+                  color="warning"
+                  @click="selectFileForEdit(item)"
+                ></v-btn>
+              </template>
+            </v-tooltip>
             <!-- / Funcionalidad para editar un archivo -->
 
             <!-- Funcionalidad para descargar un archivo -->
-            <v-btn
-              density="comfortable"
-              icon="mdi-file-download"
-              color="info"
-              :disabled="!canDownloaded(item)"
-              :loading="!canDownloaded(item)"
-              @click.prevent="downloadFile(item)"
-            ></v-btn>
+            <v-tooltip text="Download file" location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  v-bind="props"
+                  density="comfortable"
+                  icon="mdi-file-download"
+                  color="info"
+                  :disabled="!canDownloaded(item)"
+                  :loading="!canDownloaded(item)"
+                  @click.prevent="downloadFile(item)"
+                ></v-btn>
+              </template>
+            </v-tooltip>
             <!-- / Funcionalidad para descargar un archivo -->
           </template>
           <!-- / Columna acciones sobre cada elemento de la tabla -->

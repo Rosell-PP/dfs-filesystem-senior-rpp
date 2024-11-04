@@ -15,15 +15,17 @@
         >
             <v-list>
                 <!-- Si el drawer está cerrado -->
-                 <v-list-item v-if="rail">
-                   <template v-slot:append >
-                     <v-btn
-                         icon="mdi-chevron-right"
-                         variant="text"
-                         @click.stop="toogleRail"
-                     ></v-btn>
-                   </template>
-                  </v-list-item>
+                <v-list-item v-if="rail">
+                    <template v-slot:append >
+                        <span v-if="isAuthenticated" class="mdi mdi-account-circle text-primary"></span>
+                        <span v-else class="mdi mdi-account-circle-outline text-secondary"></span>
+                        <v-btn style="width: 25px !important;"
+                            icon="mdi-chevron-right"
+                            variant="text"
+                            @click.stop="toogleRail"
+                        ></v-btn>
+                    </template>
+                </v-list-item>
                 <!-- / Si el drawer está cerrado -->
 
                 <!-- Si el drawer está abierto -->
