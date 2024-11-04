@@ -20,6 +20,7 @@ networks:
 ###  3 - Redis para caché de App Laravel
 ###  4 - Minio para almacenar los archivos, sistema de almacenamiento semejante a s3 de aws
 ###  5 - App frontend desarrollada utilizando vuetify
+###  6 - Ejecuta la cola de trabajo de laravel (php artisan queue:work)
 ###
 services:
     ###
@@ -139,6 +140,23 @@ services:
         networks:  
             - dfs-network  
         command: npm run dev -- --host
+
+    ###
+    ### 6 - Ejecuta la cola de trabajo de laravel (php artisan queue:work)
+    ###
+    dfs-app-backend-queue:  
+        image: dfs-filesystem/app 
+        volumes:  
+            - './backend/:/var/www/html'
+        depends_on:  
+            - dfs-app-backend
+            - redis
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+        networks:
+            - dfs-network
+        command: php artisan queue:work --sleep=3 --tries=3 --timeout=90 &
 
 
 ###

@@ -22,8 +22,7 @@ networks:
 ###  5 - Mailpit para servidor de correo local
 ###  6 - App frontend desarrollada utilizando vuetify
 ###  7 - PhpMyAdmin para gestionar la base de datos
-###  8 - Soketi para servidor websockets similar a pusher
-###  9 - Ejecuta la cola de trabajo de laravel (php artisan queue:work)
+###  8 - Ejecuta la cola de trabajo de laravel (php artisan queue:work)
 ###
 services:
     ###
@@ -177,31 +176,9 @@ services:
                 limits:
                     cpus: "1"
                     memory: 256M
-
-    ###
-    ###  8 - Soketi para servidor de websocket como pusher
-    ###
-    soketi:
-        image: 'quay.io/soketi/soketi:latest-16-alpine'
-        environment:
-            SOKETI_DEBUG: '${SOKETI_DEBUG:-1}'
-            SOKETI_METRICS_SERVER_PORT: '9601'
-            SOKETI_DEFAULT_APP_ID: '${PUSHER_APP_ID}'
-            SOKETI_DEFAULT_APP_KEY: '${PUSHER_APP_KEY}'
-            SOKETI_DEFAULT_APP_SECRET: '${PUSHER_APP_SECRET}'
-        ports:
-            - '${PUSHER_PORT:-6001}:6001'
-            - '${PUSHER_METRICS_PORT:-9601}:9601'
-        networks:
-            - dfs-network
-        deploy:
-            resources:
-                limits:
-                    cpus: "1"
-                    memory: 256M
     
     ###
-    ### 9 - Ejecuta la cola de trabajo de laravel (php artisan queue:work)
+    ### 8 - Ejecuta la cola de trabajo de laravel (php artisan queue:work)
     ###
     dfs-app-backend-queue:  
         image: dfs-filesystem/app 
