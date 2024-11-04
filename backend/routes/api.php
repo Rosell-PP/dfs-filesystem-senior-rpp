@@ -14,8 +14,6 @@ use App\Http\Controllers\File\FileDownloadController;
 use App\Http\Controllers\File\FilesListController;
 use App\Http\Controllers\File\FileUpdateController;
 use App\Http\Controllers\File\FileUploadController;
-use Illuminate\Broadcasting\BroadcastController;
-use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -69,9 +67,5 @@ Route::prefix("")
                     ->name("file-download")
                     ->withoutMiddleware("auth:sanctum");
             });
-
-        // Ruta de autenticación de los canales broadcasting
-        Route::post('/broadcasting/auth', [BroadcastController::class, "authenticate"])
-        ->middleware(HandleCors::class);
     });
 
