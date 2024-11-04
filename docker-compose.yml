@@ -21,6 +21,7 @@ networks:
 ###  4 - Minio para almacenar los archivos, sistema de almacenamiento semejante a s3 de aws
 ###  5 - App frontend desarrollada utilizando vuetify
 ###  6 - Ejecuta la cola de trabajo de laravel (php artisan queue:work)
+###  7 - Servidor web nginx para servir la app frontend en producción
 ###
 services:
     ###
@@ -133,13 +134,11 @@ services:
             dockerfile: Dockerfile  
         image: 'dfs-filesystem/frontend'
         container_name: dfs-app-frontend
-        ports:
-            - "8087:3000"
         volumes:
             - ./frontend/:/app
         networks:  
             - dfs-network  
-        command: npm run dev -- --host
+        command: npm run build
 
     ###
     ### 6 - Ejecuta la cola de trabajo de laravel (php artisan queue:work)
@@ -157,7 +156,20 @@ services:
         networks:
             - dfs-network
         command: php artisan queue:work --sleep=3 --tries=3 --timeout=90 &
-
+    
+    ###
+    ### 7 - Servidor web nginx para servir la app frontend en producción
+    ###
+    vue-app:
+        image: nginx:alpine
+        volumes:
+            - './frontend/dist:/usr/share/nginx/html'
+        ports:
+            - "80:80"
+        depends_on:
+            - dfs-app-frontend
+        networks:
+            - dfs-network
 
 ###
 ### Volumenes de datos para persistir la info de la app

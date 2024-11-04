@@ -21,5 +21,5 @@ const app = createApp(App)
   .use(router) 
   .mount('#app');
 
-  // Restablecer la sesión
+// Restablecer la sesión al cargar la app
 store.dispatch('restoreSession');  

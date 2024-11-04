@@ -2,9 +2,10 @@ Entorno de desarrollo
 =====================
 
 Renombre cada uno de los archivos .env.example a .env
-    - .env.example
-    - ./backend/.env.example
-    - ./frontend/.env.example
+
+    1. .env.example
+    2. ./backend/.env.example
+    3. ./frontend/.env.example
 
 Para levantar la aplicación en modo de desarrollo se debe ejecutar el siguiente comando:
 
