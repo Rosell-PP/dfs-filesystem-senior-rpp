@@ -257,13 +257,24 @@
     },
 
     mounted() {
-      const channel = `compress-files-channel-${this.getUser.id}`;
-      console.log("Channel => ", channel);
-      
+      /**
+       * For testing real time communication
+       */
+      echo.channel('my-channel')
+          .listen('.my-event', function(data) {
+          console.log(JSON.stringify(data));
+      });
+
+      const channel = `compress-files-channel`;
       echo.channel(channel)
+        .subscribed(e => {
+          console.info("Subscribed!!!!");
+        })
         .listen('.file.zipped', (e) => {
-          console.log('Evento recibido:', e);
+          console.log('FileProcessedEvent recibido:');
+          console.log("File => ", e.file);
         });
+      
     },
 
     computed:  {

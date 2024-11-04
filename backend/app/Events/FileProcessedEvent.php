@@ -45,7 +45,7 @@ class FileProcessedEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('compress-files-channel-'.$this->file->user_id),
+            'compress-files-channel'
         ];
     }
 
